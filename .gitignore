@@ -1,0 +1,30 @@
+# IntelliJ
+.idea/
+
+# Maven
+target/
+
+# Gradle
+build/
+
+# Compiled files
+*.class
+
+# Logs and databases
+*.log
+*.sqlite
+*.sql
+*.sqlite3
+
+# Generated files
+*.iml
+out/
+gen/
+
+# Dependency directories
+lib/
+bin/
+
+# OS generated files
+.DS_Store
+Thumbs.db
