@@ -8,7 +8,6 @@ import org.apache.synapse.rest.AbstractHandler;
 import org.wso2.carbon.dto.RabbitMQDataDTO;
 import org.wso2.carbon.properties.InternalLoader;
 import org.wso2.carbon.properties.PropertyRetriever;
-import org.wso2.carbon.properties.TomlLoader;
 
 import static org.wso2.carbon.utils.RabbitMQUtils.*;
 
