@@ -5,45 +5,14 @@ import org.apache.synapse.ManagedLifecycle;
 import org.apache.synapse.MessageContext;
 import org.apache.synapse.core.SynapseEnvironment;
 import org.apache.synapse.rest.AbstractHandler;
-import org.wso2.carbon.config.RabbitMQConfig;
 import org.wso2.carbon.dto.RabbitMQDataDTO;
+import org.wso2.carbon.properties.InternalLoader;
+import org.wso2.carbon.properties.PropertyRetriever;
+import org.wso2.carbon.properties.TomlLoader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.concurrent.TimeoutException;
+import static org.wso2.carbon.utils.RabbitMQUtils.*;
 
 public class RabbitMQHandler  extends AbstractHandler implements ManagedLifecycle {
-
-    private static Properties retrieveProperties() {
-        Properties properties = new Properties();
-        try (InputStream input = RabbitMQHandler.class.getClassLoader().getResourceAsStream("config.properties")) {
-            properties.load(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return properties;
-    }
-
-
-
-    private static void cleanRessources(Channel channel) throws IOException, TimeoutException {
-        channel.close();
-        channel.getConnection().close();
-    }
-
-    private static void sendMessageToRabbit(String request, RabbitMQDataDTO rabbitMQDataDTO, Channel channel) throws IOException {
-        channel.basicPublish("", rabbitMQDataDTO.getQueuename(), null, request.getBytes());
-    }
-
-    private static Channel configureRabbit(RabbitMQDataDTO rabbitMQDataDTO) throws Exception {
-        RabbitMQConfig rabbitMQConfig = new RabbitMQConfig();
-
-        // configuration de rabbitMQ
-        return rabbitMQConfig.configure(rabbitMQDataDTO);
-    }
-
-
 
     public boolean handleRequest(MessageContext messageContext) {
         return true;
@@ -52,20 +21,13 @@ public class RabbitMQHandler  extends AbstractHandler implements ManagedLifecycl
     public boolean handleResponse(MessageContext messageContext) {
         String request = (String) messageContext.getProperty("REST_FULL_REQUEST_PATH");
         try {
-            Properties properties = retrieveProperties();
-            RabbitMQDataDTO rabbitMQDataDTO = RabbitMQDataDTO.builder()
-                    .host(properties.getProperty("rabbit.host"))
-                    .port(Integer.parseInt(properties.getProperty("rabbit.port")))
-                    .user(properties.getProperty("rabbit.username"))
-                    .password(properties.getProperty("rabbit.password"))
-                    .queuename(properties.getProperty("rabbit.queuename"))
-                    .build();
+            PropertyRetriever propertyRetriever = new InternalLoader();
+            RabbitMQDataDTO rabbitMQDataDTO = propertyRetriever.retrieveProperties();
             Channel channel = configureRabbit(rabbitMQDataDTO);
             // Envoi d'un message à la queue
             sendMessageToRabbit(request, rabbitMQDataDTO, channel);
             // Fermeture du canal et de la connexion
             cleanRessources(channel);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
