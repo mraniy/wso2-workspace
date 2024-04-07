@@ -1,17 +1,19 @@
 package org.wso2.carbon.properties;
 
+import org.wso2.carbon.custom.RabbitMQHandler;
 import org.wso2.carbon.dto.RabbitMQDataDTO;
-import org.wso2.carbon.test.RabbitMQHandler;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class InternalLoader implements PropertyRetriever{
-
+    private static final Logger logger = Logger.getLogger(InternalLoader.class.getName());
 
     @Override
     public RabbitMQDataDTO retrieveProperties() {
+        logger.info("retrieve properties from config.properties");
         Properties properties = new Properties();
         try (InputStream input = RabbitMQHandler.class.getClassLoader().getResourceAsStream("config.properties")) {
             properties.load(input);

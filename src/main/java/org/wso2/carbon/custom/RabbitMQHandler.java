@@ -1,4 +1,4 @@
-package org.wso2.carbon.test;
+package org.wso2.carbon.custom;
 
 import com.rabbitmq.client.Channel;
 import org.apache.synapse.ManagedLifecycle;
@@ -9,15 +9,19 @@ import org.wso2.carbon.dto.RabbitMQDataDTO;
 import org.wso2.carbon.properties.InternalLoader;
 import org.wso2.carbon.properties.PropertyRetriever;
 
+import java.util.logging.Logger;
+
 import static org.wso2.carbon.utils.RabbitMQUtils.*;
 
 public class RabbitMQHandler  extends AbstractHandler implements ManagedLifecycle {
+    private static final Logger logger = Logger.getLogger(RabbitMQHandler.class.getName());
 
     public boolean handleRequest(MessageContext messageContext) {
         return true;
     }
 
     public boolean handleResponse(MessageContext messageContext) {
+        logger.info("launching custom handler RabbitMQHandler");
         String request = (String) messageContext.getProperty("REST_FULL_REQUEST_PATH");
         try {
             PropertyRetriever propertyRetriever = new InternalLoader();
