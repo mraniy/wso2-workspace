@@ -63,12 +63,46 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-jar</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${carbon.home}/repository/components/lib</outputDirectory> <!-- Dossier cible -->
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>*.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version> <!-- Assurez-vous d'utiliser la dernière version -->
                 <configuration>
                     <source>11</source> <!-- Indiquez la version de source Java que vous utilisez -->
                     <target>11</target> <!-- Indiquez la version cible Java que vous souhaitez -->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version> <!-- Mettez à jour la version selon vos besoins -->
+                <configuration>
+                    <systemPropertyVariables>
+                        <carbon.home>${carbon.home}</carbon.home>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
             <plugin>
